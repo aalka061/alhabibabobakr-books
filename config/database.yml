@@ -27,6 +27,10 @@ test:
 # Similarly, if you deploy your application as a Docker container, you must
 # ensure the database is located in a persisted volume.
 production:
-  <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
   adapter: postgresql
+  encoding: unicode
+  # This pulls the connection string from Railway's environment variable
+  url: <%= ENV['DATABASE_URL'] %>
+  # We manually set the pool and timeout since we aren't inheriting anymore
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
