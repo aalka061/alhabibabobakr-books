@@ -40,6 +40,7 @@ class BooksController < ApplicationController
 
   def book_params
     params.require(:book).permit(:title, :description, :reading_month, :day_of_month,
-      :category_id, :hijri_death_date, :pdf_url, :image_url, :url, :translated_pdf_url)
+      :category_id, :hijri_death_date, :pdf_url, :image_url, :url,
+      :translated_pdf_url, :translated_editable_url)
   end
 end

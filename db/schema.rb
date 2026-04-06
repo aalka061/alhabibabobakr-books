@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_05_180059) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_06_013428) do
   create_table "books", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -25,6 +25,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_05_180059) do
     t.string "day_of_month"
     t.string "pdf_url"
     t.string "translated_pdf_url"
+    t.string "translated_editable_url"
     t.index ["category_id"], name: "index_books_on_category_id"
   end
 
