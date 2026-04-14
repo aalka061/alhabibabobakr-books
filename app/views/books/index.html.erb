@@ -100,27 +100,54 @@
           <% end %>
         </section>
       <% end %>
+      <%# ── Unsorted books: only in cards view (table lists them in the main table) ── %>
+      <% if @unsorted_books.any? %>
+        <section class="mt-16 bg-white border border-stone-100 rounded-2xl p-6 sm:p-8 shadow-sm">
+          <h2 class="text-lg font-bold text-stone-400 border-b border-stone-100 pb-4 mb-5 font-serif">
+            كتب إضافية (غير مؤرخة)
+            <span class="text-sm font-normal text-stone-300 mr-2"><%= @unsorted_books.count %> كتاب</span>
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <% @unsorted_books.sort_by { |b| b.title.to_s }.each do |book| %>
+              <div class="flex items-center gap-3 py-2 border-r-2 border-stone-200 pr-3 hover:border-sky-300 transition-colors group">
+                <svg class="w-4 h-4 text-stone-200 group-hover:text-sky-300 transition-colors shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                </svg>
+                <%= link_to book.title, book_path(book),
+                      class: "text-sm text-stone-600 hover:text-sky-600 transition-colors font-serif truncate min-w-0" %>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
     </div>
     <%# ══════════════════════════════════════════════════════ %>
     <%# TABLE VIEW — 3 columns: date | book info | links      %>
     <%# ══════════════════════════════════════════════════════ %>
     <div id="view-table" class="hidden">
-      <div class="mb-6 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
-        <div class="relative flex-1 min-w-0 w-full sm:min-w-60">
+      <div class="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_minmax(0,11rem)_minmax(0,11rem)_auto] gap-3 items-end">
+        <div class="relative flex-1 min-w-0 sm:col-span-2 lg:col-span-1">
           <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
           </svg>
-          <input type="text" id="table-search" placeholder="ابحث في العنوان أو الفئة…" onkeyup="filterTable()"
+          <input type="text" id="table-search" placeholder="ابحث في العنوان أو الفئة…" dir="auto" autocomplete="off" oninput="filterTable()"
             class="w-full pr-9 pl-4 py-2.5 text-sm border border-stone-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-sky-300 placeholder-stone-300">
         </div>
         <select id="month-filter" onchange="filterTable()"
-          class="text-sm border border-stone-200 rounded-xl bg-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-300 text-stone-600 w-full sm:w-auto min-w-0">
+          class="text-sm border border-stone-200 rounded-xl bg-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-300 text-stone-600 w-full min-w-0">
           <option value="">كل الأشهر</option>
           <% @hijri_order.each do |month| %>
             <option value="<%= month %>"><%= month %></option>
           <% end %>
         </select>
-        <span id="row-count" class="text-xs text-stone-400"></span>
+        <select id="category-filter" onchange="filterTable()"
+          class="text-sm border border-stone-200 rounded-xl bg-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-300 text-stone-600 w-full min-w-0">
+          <option value="">كل التصنيفات</option>
+          <% @filter_categories.each do |cat| %>
+            <option value="<%= cat.id %>"><%= cat.name %></option>
+          <% end %>
+        </select>
+        <span id="row-count" class="text-xs text-stone-400 sm:col-span-2 lg:col-span-1 text-center lg:text-right py-1 whitespace-nowrap"></span>
       </div>
       <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
@@ -143,9 +170,10 @@
                 <% next unless books.present? %>
                 <% books.sort_by { |b| b.day_of_month.to_i }.each do |book| %>
                   <tr class="table-row border-b border-stone-50 hover:bg-sky-50/40 transition-colors duration-150"
-                      data-title="<%= book.title.downcase %>"
+                      data-title="<%= book.title.to_s.unicode_normalize(:nfc) %>"
                       data-month="<%= month %>"
-                      data-category="<%= book.category&.name&.downcase %>">
+                      data-category="<%= (book.category&.name || "عام").to_s.unicode_normalize(:nfc) %>"
+                      data-category-id="<%= book.category_id %>">
                     <%# ── Col 1: day + month ── %>
                     <td class="px-2 sm:px-5 py-3 sm:py-4 align-top">
                       <div class="flex flex-col gap-1.5">
@@ -217,6 +245,80 @@
                   </tr>
                 <% end %>
               <% end %>
+              <% @unsorted_books.sort_by { |b| b.title.to_s }.each do |book| %>
+                <tr class="table-row border-b border-stone-50 hover:bg-stone-50/80 transition-colors duration-150 bg-stone-50/40"
+                    data-title="<%= book.title.to_s.unicode_normalize(:nfc) %>"
+                    data-month=""
+                    data-category="<%= (book.category&.name || "عام").to_s.unicode_normalize(:nfc) %>"
+                    data-category-id="<%= book.category_id %>"
+                    data-extras="<%= "غير مؤرخة كتب إضافية".unicode_normalize(:nfc) %>">
+                  <td class="px-2 sm:px-5 py-3 sm:py-4 align-top">
+                    <div class="flex flex-col gap-1.5">
+                      <span class="inline-block bg-stone-200 text-stone-600 text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-1 rounded-full w-fit max-w-full">
+                        غير مؤرخ
+                      </span>
+                      <span class="text-stone-500 font-semibold font-serif text-[10px] sm:text-xs leading-snug">—</span>
+                    </div>
+                  </td>
+                  <td class="px-2 sm:px-5 py-3 sm:py-4 align-top max-w-0">
+                    <div class="flex items-start gap-2 sm:gap-3 min-w-0">
+                      <% if book.image_url.present? %>
+                        <img src="<%= book.image_url %>" class="w-8 h-10 sm:w-9 sm:h-12 object-cover rounded shadow-sm shrink-0 mt-0.5" alt="">
+                      <% else %>
+                        <div class="w-8 h-10 sm:w-9 sm:h-12 bg-stone-100 rounded flex items-center justify-center shrink-0 mt-0.5">
+                          <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                          </svg>
+                        </div>
+                      <% end %>
+                      <div class="flex flex-col gap-1 min-w-0 flex-1 overflow-hidden">
+                        <%= link_to book.title, book_path(book),
+                              title: book.title,
+                              class: "font-serif font-semibold text-stone-800 hover:text-sky-600 transition-colors leading-snug block min-w-0 line-clamp-2 sm:line-clamp-3 break-words" %>
+                        <div class="flex items-center gap-2 flex-wrap mt-0.5">
+                          <span class="bg-stone-100 text-stone-500 text-xs px-2 py-0.5 rounded">
+                            <%= book.category&.name || "عام" %>
+                          </span>
+                          <% if book.hijri_death_date.present? %>
+                            <span class="text-stone-400 text-xs font-mono">ت. <%= book.hijri_death_date %></span>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-1.5 sm:px-5 py-3 sm:py-4 align-middle">
+                    <div class="flex flex-row flex-wrap items-center justify-center gap-1 sm:gap-1.5">
+                      <% if book.pdf_url.present? %>
+                        <%= link_to book.pdf_url, target: "_blank", title: "تحميل PDF العربي",
+              class: "flex items-center gap-1 text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md transition-colors font-semibold whitespace-nowrap" do %>
+                          <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                          </svg>
+                          PDF
+                        <% end %>
+                      <% end %>
+                      <% if book.translated_pdf_url.present? %>
+                        <%= link_to book.translated_pdf_url, target: "_blank", title: "English Translation PDF",
+              class: "flex items-center gap-1 text-xs bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 px-2 py-1 rounded-md transition-colors font-semibold whitespace-nowrap" do %>
+                          <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-width="2.5" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                          </svg>
+                          EN
+                        <% end %>
+                      <% end %>
+                      <% if book.translated_editable_url.present? %>
+                        <%= link_to book.translated_editable_url, target: "_blank", title: "Edit English Translation",
+              class: "flex items-center gap-1 text-xs bg-violet-50 hover:bg-violet-100 text-violet-700 border border-violet-200 px-2 py-1 rounded-md transition-colors font-semibold whitespace-nowrap" do %>
+                          <svg class="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                          </svg>
+                          Edit
+                        <% end %>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
             </tbody>
           </table>
         </div>
@@ -225,28 +327,6 @@
         </div>
       </div>
     </div>
-    <%# ══════════════════════════════════════════ %>
-    <%# UNSORTED BOOKS                            %>
-    <%# ══════════════════════════════════════════ %>
-    <% if @unsorted_books.any? %>
-      <section class="mt-16 bg-white border border-stone-100 rounded-2xl p-8 shadow-sm">
-        <h2 class="text-lg font-bold text-stone-400 border-b border-stone-100 pb-4 mb-5 font-serif">
-          كتب إضافية (غير مؤرخة)
-          <span class="text-sm font-normal text-stone-300 mr-2"><%= @unsorted_books.count %> كتاب</span>
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          <% @unsorted_books.each do |book| %>
-            <div class="flex items-center gap-3 py-2 border-r-2 border-stone-200 pr-3 hover:border-sky-300 transition-colors group">
-              <svg class="w-4 h-4 text-stone-200 group-hover:text-sky-300 transition-colors shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
-              </svg>
-              <%= link_to book.title, book_path(book),
-                    class: "text-sm text-stone-600 hover:text-sky-600 transition-colors font-serif truncate" %>
-            </div>
-          <% end %>
-        </div>
-      </section>
-    <% end %>
   </main>
 </div>
 <script>
@@ -274,14 +354,46 @@
     localStorage.setItem('library-view', mode);
   }
 
+  /** Normalize text for Arabic-friendly substring search (NFC, strip tashkeel, fold common letters). */
+  function normalizeForSearch(str) {
+    if (str == null || str === '') return '';
+    let s = String(str);
+    if (typeof s.normalize === 'function') {
+      try { s = s.normalize('NFC'); } catch (e) { /* ignore */ }
+    }
+    // Arabic & Quranic combining marks (harakat, etc.)
+    s = s.replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E8\u06EA-\u06ED]/g, '');
+    s = s.replace(/\u0640/g, ''); // tatweel / kashida
+    s = s.replace(/[\u200C\u200D\uFEFF]/g, ''); // ZWNJ, ZWJ, BOM
+    // Alef with madda / hamza / wasla → bare alef
+    s = s.replace(/[\u0622\u0623\u0625\u0671]/g, '\u0627');
+    // Teh marbuta → heh (common typing mismatch)
+    s = s.replace(/\u0629/g, '\u0647');
+    // Alef maqsura → ya
+    s = s.replace(/\u0649/g, '\u064A');
+    s = s.toLowerCase();
+    return s.trim();
+  }
+
   function filterTable() {
-    const query   = document.getElementById('table-search').value.trim().toLowerCase();
-    const month   = document.getElementById('month-filter').value;
-    const rows    = document.querySelectorAll('#table-body .table-row');
-    let   visible = 0;
+    const queryRaw = document.getElementById('table-search').value;
+    const query    = normalizeForSearch(queryRaw);
+    const month    = document.getElementById('month-filter').value;
+    const category = document.getElementById('category-filter').value;
+    const rows     = document.querySelectorAll('#table-body .table-row');
+    let    visible = 0;
     rows.forEach(row => {
-      const match = (!query || row.dataset.title.includes(query) || (row.dataset.category||'').includes(query))
-                 && (!month || row.dataset.month === month);
+      const titleNorm    = normalizeForSearch(row.dataset.title || '');
+      const categoryNorm = normalizeForSearch(row.dataset.category || '');
+      const extrasNorm   = normalizeForSearch(row.dataset.extras || '');
+      const textOk =
+        !query ||
+        titleNorm.includes(query) ||
+        categoryNorm.includes(query) ||
+        extrasNorm.includes(query);
+      const monthOk = !month || row.dataset.month === month;
+      const categoryOk = !category || String(row.dataset.categoryId) === category;
+      const match        = textOk && monthOk && categoryOk;
       row.classList.toggle('hidden', !match);
       if (match) visible++;
     });

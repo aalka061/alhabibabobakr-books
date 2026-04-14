@@ -14,8 +14,11 @@ class BooksController < ApplicationController
     # We use 'includes(:category)' to keep the app fast (preventing N+1 queries)
     @books_by_month = Book.includes(:category).where.not(reading_month: nil).group_by(&:reading_month)
 
+    # Categories that appear in any listed book (dated + unsorted, for table filters)
+    @filter_categories = Category.where(id: Book.distinct.select(:category_id)).order(:name)
+
     # 3. Optional: Books with no month found
-    @unsorted_books = Book.where(reading_month: nil)
+    @unsorted_books = Book.where(reading_month: nil).includes(:category)
   end
 
   def show
