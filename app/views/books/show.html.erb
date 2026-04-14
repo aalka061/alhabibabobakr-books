@@ -4,11 +4,14 @@
     <%# ─── Top nav bar ─── %>
     <div class="flex items-center justify-between mb-8 pb-5 border-b border-stone-200">
       <%= link_to books_path,
-            class: "flex items-center gap-2 text-stone-400 hover:text-sky-600 transition-colors text-sm font-medium group" do %>
-        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-        </svg>
-        العودة للمكتبة
+            class: "flex items-center gap-3 text-stone-400 hover:text-sky-600 transition-colors text-sm font-medium group min-w-0" do %>
+        <img src="/logo.png" alt="" width="256" height="256" class="h-8 w-8 rounded-full object-cover opacity-90 group-hover:opacity-100 shrink-0 ring-1 ring-stone-200" aria-hidden="true" />
+        <span class="flex items-center gap-2">
+          <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+          العودة للمكتبة
+        </span>
       <% end %>
       <%= link_to edit_book_path(@book),
             class: "flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white text-sm px-5 py-2 rounded-xl transition-colors shadow-sm" do %>

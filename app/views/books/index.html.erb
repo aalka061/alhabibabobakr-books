@@ -2,12 +2,15 @@
 <div class="min-h-screen bg-stone-50" dir="rtl">
   <%# ─── HEADER ─── %>
   <header class="bg-white border-b border-stone-200 sticky top-0 z-30 shadow-sm">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
-      <div>
-        <h1 class="text-2xl font-bold text-stone-800 font-serif leading-tight">المكتبة الجدولية</h1>
-        <p class="text-sm text-stone-400 mt-0.5">الجدول الزمني للقراءة المنظومية حسب أشهر الوفاة</p>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+      <div class="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+        <img src="/logo.png" alt="الحبيب أبو بكر" width="256" height="256" class="h-11 sm:h-14 w-11 sm:w-14 rounded-full object-cover shrink-0 ring-1 ring-stone-200 shadow-sm" />
+        <div class="min-w-0 flex-1">
+          <h1 class="text-xl sm:text-2xl font-bold text-stone-800 font-serif leading-tight">المكتبة الجدولية</h1>
+          <p class="text-[11px] sm:text-sm text-stone-400 mt-0.5 leading-snug line-clamp-2 sm:line-clamp-none">الجدول الزمني للقراءة المنظومية حسب أشهر الوفاة</p>
+        </div>
       </div>
-      <div class="flex items-center gap-2 bg-stone-100 rounded-xl p-1" id="view-toggle">
+      <div class="flex items-center justify-center sm:justify-end gap-2 bg-stone-100 rounded-xl p-1 shrink-0 w-full sm:w-auto" id="view-toggle">
         <button onclick="switchView('cards')" id="btn-cards"
           class="view-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-white text-stone-700 shadow-sm">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -28,7 +31,7 @@
       </div>
     </div>
   </header>
-  <main class="max-w-7xl mx-auto px-6 py-10">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
     <%# ══════════════════════════════════════════ %>
     <%# CARDS VIEW                                %>
     <%# ══════════════════════════════════════════ %>
@@ -102,8 +105,8 @@
     <%# TABLE VIEW — 3 columns: date | book info | links      %>
     <%# ══════════════════════════════════════════════════════ %>
     <div id="view-table" class="hidden">
-      <div class="mb-6 flex flex-wrap items-center gap-3">
-        <div class="relative flex-1 min-w-60">
+      <div class="mb-6 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
+        <div class="relative flex-1 min-w-0 w-full sm:min-w-60">
           <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
           </svg>
@@ -111,7 +114,7 @@
             class="w-full pr-9 pl-4 py-2.5 text-sm border border-stone-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-sky-300 placeholder-stone-300">
         </div>
         <select id="month-filter" onchange="filterTable()"
-          class="text-sm border border-stone-200 rounded-xl bg-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-300 text-stone-600">
+          class="text-sm border border-stone-200 rounded-xl bg-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-sky-300 text-stone-600 w-full sm:w-auto min-w-0">
           <option value="">كل الأشهر</option>
           <% @hijri_order.each do |month| %>
             <option value="<%= month %>"><%= month %></option>
@@ -121,12 +124,17 @@
       </div>
       <div class="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full text-sm" id="books-table">
+          <table class="w-full table-fixed text-sm" id="books-table">
+            <colgroup>
+              <col class="w-[5.5rem] sm:w-36" />
+              <col />
+              <col class="w-[6.5rem] sm:w-44" />
+            </colgroup>
             <thead>
               <tr class="bg-stone-50 border-b border-stone-200 text-stone-500 text-right">
-                <th class="px-5 py-3.5 font-semibold w-36">التاريخ</th>
-                <th class="px-5 py-3.5 font-semibold">الكتاب</th>
-                <th class="px-5 py-3.5 font-semibold text-center w-44">روابط</th>
+                <th class="px-2 sm:px-5 py-3 sm:py-3.5 font-semibold align-bottom">التاريخ</th>
+                <th class="px-2 sm:px-5 py-3 sm:py-3.5 font-semibold align-bottom min-w-0">الكتاب</th>
+                <th class="px-2 sm:px-5 py-3 sm:py-3.5 font-semibold text-center align-bottom">روابط</th>
               </tr>
             </thead>
             <tbody id="table-body">
@@ -139,29 +147,30 @@
                       data-month="<%= month %>"
                       data-category="<%= book.category&.name&.downcase %>">
                     <%# ── Col 1: day + month ── %>
-                    <td class="px-5 py-4 align-top">
+                    <td class="px-2 sm:px-5 py-3 sm:py-4 align-top">
                       <div class="flex flex-col gap-1.5">
-                        <span class="inline-block bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-1 rounded-full w-fit">
+                        <span class="inline-block bg-amber-100 text-amber-700 text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-1 rounded-full w-fit max-w-full truncate">
                           يوم <%= book.day_of_month.present? ? book.day_of_month : "؟" %>
                         </span>
-                        <span class="text-sky-700 font-semibold font-serif text-xs leading-snug"><%= month %></span>
+                        <span class="text-sky-700 font-semibold font-serif text-[10px] sm:text-xs leading-snug line-clamp-2"><%= month %></span>
                       </div>
                     </td>
                     <%# ── Col 2: thumbnail + title + meta ── %>
-                    <td class="px-5 py-4 align-top">
-                      <div class="flex items-start gap-3">
+                    <td class="px-2 sm:px-5 py-3 sm:py-4 align-top max-w-0">
+                      <div class="flex items-start gap-2 sm:gap-3 min-w-0">
                         <% if book.image_url.present? %>
-                          <img src="<%= book.image_url %>" class="w-9 h-12 object-cover rounded shadow-sm shrink-0 mt-0.5" alt="">
+                          <img src="<%= book.image_url %>" class="w-8 h-10 sm:w-9 sm:h-12 object-cover rounded shadow-sm shrink-0 mt-0.5" alt="">
                         <% else %>
-                          <div class="w-9 h-12 bg-stone-100 rounded flex items-center justify-center shrink-0 mt-0.5">
-                            <svg class="w-4 h-4 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div class="w-8 h-10 sm:w-9 sm:h-12 bg-stone-100 rounded flex items-center justify-center shrink-0 mt-0.5">
+                            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                             </svg>
                           </div>
                         <% end %>
-                        <div class="flex flex-col gap-1 min-w-0">
+                        <div class="flex flex-col gap-1 min-w-0 flex-1 overflow-hidden">
                           <%= link_to book.title, book_path(book),
-                                class: "font-serif font-semibold text-stone-800 hover:text-sky-600 transition-colors leading-snug" %>
+                                title: book.title,
+                                class: "font-serif font-semibold text-stone-800 hover:text-sky-600 transition-colors leading-snug block min-w-0 line-clamp-2 sm:line-clamp-3 break-words" %>
                           <div class="flex items-center gap-2 flex-wrap mt-0.5">
                             <span class="bg-stone-100 text-stone-500 text-xs px-2 py-0.5 rounded">
                               <%= book.category&.name || "عام" %>
@@ -174,8 +183,8 @@
                       </div>
                     </td>
                     <%# ── Col 3: icon buttons ── %>
-                    <td class="px-5 py-4 align-middle">
-                      <div class="flex items-center justify-center gap-1.5">
+                    <td class="px-1.5 sm:px-5 py-3 sm:py-4 align-middle">
+                      <div class="flex flex-row flex-wrap items-center justify-center gap-1 sm:gap-1.5">
                         <% if book.pdf_url.present? %>
                           <%= link_to book.pdf_url, target: "_blank", title: "تحميل PDF العربي",
             class: "flex items-center gap-1 text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2 py-1 rounded-md transition-colors font-semibold whitespace-nowrap" do %>
