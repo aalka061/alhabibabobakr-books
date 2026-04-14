@@ -1,0 +1,29 @@
+<div class="min-h-screen bg-stone-50 flex flex-col items-center justify-center px-4 py-12" dir="rtl">
+  <div class="w-full max-w-md">
+    <div class="text-center mb-8">
+      <img src="/logo.png" alt="" width="256" height="256" class="h-16 w-16 rounded-full object-cover mx-auto ring-2 ring-stone-200 shadow-md mb-4" />
+      <h1 class="text-2xl font-bold text-stone-800 font-serif">تسجيل الدخول</h1>
+      <p class="text-sm text-stone-500 mt-2">مطلوب لتعديل بيانات الكتب</p>
+    </div>
+
+    <%= form_with url: login_path, method: :post, local: true, class: "bg-white border border-stone-200 rounded-2xl shadow-sm p-6 sm:p-8 space-y-5" do %>
+      <div>
+        <label for="email" class="block text-sm font-bold text-stone-700 mb-1.5">البريد الإلكتروني</label>
+        <%= email_field_tag :email, params[:email], id: "email", autocomplete: "username", required: true, dir: "ltr",
+              class: "w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" %>
+      </div>
+      <div>
+        <label for="password" class="block text-sm font-bold text-stone-700 mb-1.5">كلمة المرور</label>
+        <%= password_field_tag :password, nil, id: "password", autocomplete: "current-password", required: true, dir: "ltr",
+              class: "w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" %>
+      </div>
+      <div class="pt-2">
+        <%= submit_tag "دخول", class: "w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded-xl transition-colors cursor-pointer text-base shadow-sm" %>
+      </div>
+    <% end %>
+
+    <p class="text-center mt-6">
+      <%= link_to "العودة للمكتبة", root_path, class: "text-sm text-sky-600 hover:text-sky-800" %>
+    </p>
+  </div>
+</div>

@@ -6,6 +6,7 @@ one:
   url: MyString
   published_at: MyString
   hijri_death_date: MyString
+  category: one
 
 two:
   title: MyString
@@ -13,3 +14,4 @@ two:
   url: MyString
   published_at: MyString
   hijri_death_date: MyString
+  category: two

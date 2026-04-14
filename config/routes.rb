@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  get "books/index"
-  get "books/show"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -14,5 +12,9 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   root "books#index"
-  resources :books
+  get "login", to: "sessions#new", as: :login
+  post "login", to: "sessions#create"
+  delete "logout", to: "sessions#destroy", as: :logout
+
+  resources :books, only: %i[index show edit update]
 end

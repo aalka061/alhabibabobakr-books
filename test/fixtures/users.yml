@@ -1,0 +1,4 @@
+# Password for all fixtures: "secret" (BCrypt cost 4 for speed)
+admin:
+  email: editor@example.com
+  password_digest: <%= BCrypt::Password.create("secret", cost: 4) %>
