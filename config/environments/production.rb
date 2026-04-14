@@ -20,8 +20,10 @@ Rails.application.configure do
   # key such as config/credentials/production.key. This key is used to decrypt credentials (and other encrypted files).
   # config.require_master_key = true
 
-  # Disable serving static files from `public/`, relying on NGINX/Apache to do so instead.
-  config.public_file_server.enabled = false
+  # Serve files from `public/` (favicon, logo, robots.txt, etc.). Set RAILS_SERVE_STATIC_FILES=false
+  # when a reverse proxy serves `public/` directly (nginx `root` / `alias`, Caddy `file_server`).
+  # Docker and one-process hosts (e.g. Railway) usually need this enabled, which is the default.
+  config.public_file_server.enabled = !%w[false 0 no off].include?(ENV.fetch("RAILS_SERVE_STATIC_FILES", "true").to_s.downcase)
 
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
