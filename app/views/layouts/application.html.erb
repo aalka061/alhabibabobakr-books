@@ -1,8 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
   <head>
-    <title><%= content_for(:title) || "Alhabibabobakr Books" %></title>
+    <meta charset="utf-8">
+    <% app_page_title = content_for(:title).presence || "المكتبة الجدولية — مكتبة الحبيب أبو بكر" %>
+    <% app_description = content_for(:meta_description).presence || "المكتبة الجدولية — الجدول الزمني لقراءة المنظومات والتراجم حسب المنااسبات والحوليات. مكتبة الحبيب أبو بكر." %>
+    <% og_image_url = content_for(:og_image).presence || "#{request.base_url}/logo.png" %>
+    <title><%= app_page_title %></title>
+    <meta name="description" content="<%= app_description %>">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= app_page_title %>">
+    <meta property="og:description" content="<%= app_description %>">
+    <meta property="og:url" content="<%= request.original_url %>">
+    <meta property="og:image" content="<%= og_image_url %>">
+    <meta property="og:locale" content="ar_SA">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= app_page_title %>">
+    <meta name="twitter:description" content="<%= app_description %>">
+    <meta name="twitter:image" content="<%= og_image_url %>">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
