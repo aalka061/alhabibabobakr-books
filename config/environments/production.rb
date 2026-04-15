@@ -48,7 +48,11 @@ Rails.application.configure do
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
-  # config.assume_ssl = true
+  # Needed so request.ssl?, request.base_url, and generated URLs use https:// — otherwise
+  # og:image / og:url stay http:// and WhatsApp and other apps drop the preview image and text.
+  config.assume_ssl = ActiveModel::Type::Boolean.new.cast(
+    ENV.fetch("RAILS_ASSUME_SSL", "true")
+  )
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
