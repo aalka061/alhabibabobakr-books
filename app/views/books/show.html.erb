@@ -88,7 +88,13 @@
             <%= @book.category&.name || "عام" %>
           </span>
           <% if @book.reading_month.present? %>
-            <span class="text-xs text-stone-400">قراءة: <%= @book.reading_month %><% if @book.day_of_month.present? %> · يوم <%= @book.day_of_month %><% end %></span>
+            <span class="text-xs text-stone-400 inline-flex items-baseline gap-2 flex-wrap" dir="rtl">
+              <% if @book.day_of_month.present? %>
+                <span class="tabular-nums font-medium text-stone-500"><%= eastern_arabic_numerals(@book.day_of_month) %></span>
+              <% end %>
+              <span class="font-serif text-stone-500"><%= @book.reading_month %></span>
+              <span class="text-stone-400">قراءة:</span>
+            </span>
           <% end %>
         </div>
 
@@ -122,7 +128,7 @@
               <dt class="text-stone-500 font-semibold text-xs sm:text-sm mb-1">يوم الشهر</dt>
               <dd>
                 <% if @book.day_of_month.present? %>
-                  <span class="inline-flex bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-lg text-sm tabular-nums"><%= @book.day_of_month %></span>
+                  <span class="inline-flex bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-lg text-sm tabular-nums"><%= eastern_arabic_numerals(@book.day_of_month) %></span>
                 <% else %>
                   <span class="text-stone-400">—</span>
                 <% end %>

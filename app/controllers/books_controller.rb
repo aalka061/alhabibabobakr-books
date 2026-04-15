@@ -4,12 +4,8 @@ class BooksController < ApplicationController
 
 
   def index
-    # 1. Define the chronological order of Hijri months
-    @hijri_order = %w[
-      محرم صفر ربيع\ الأول ربيع\ الثاني
-      جمادى\ الأولى جمادى\ الآخرة رجب شعبان
-      رمضان شوال ذو\ القعدة ذي\ الحجة
-    ]
+    # 1. Chronological order of Hijri months (see Book::HIJRI_MONTH_ORDER)
+    @hijri_order = Book::HIJRI_MONTH_ORDER
 
     # 2. Fetch books and group them by the month we scraped
     # We use 'includes(:category)' to keep the app fast (preventing N+1 queries)

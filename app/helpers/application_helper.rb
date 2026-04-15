@@ -1,4 +1,11 @@
 module ApplicationHelper
+  # Eastern Arabic numerals (٠–٩) for display; digits in DB stay ASCII for sorting/filtering.
+  def eastern_arabic_numerals(value)
+    return "" if value.nil?
+
+    value.to_s.tr("0123456789", "٠١٢٣٤٥٦٧٨٩")
+  end
+
   # When the app sits behind TLS termination, X-Forwarded-Proto may be https while
   # request.base_url is still http:// unless config.assume_ssl is set. These helpers
   # force https for Open Graph URLs so crawlers (WhatsApp, Telegram, etc.) get valid previews.
